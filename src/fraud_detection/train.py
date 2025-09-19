@@ -67,6 +67,17 @@ def find_best_threshold_for_profit(
             best_thr, best_profit = float(t), float(p)
     return {"thr": best_thr, "profit": best_profit}
 
+def find_best_threshold_for_f1(y_true: np.ndarray, y_prob: np.ndarray, thr_grid: np.ndarray | None = None) -> dict:
+    if thr_grid is None:
+        thr_grid = np.linspace(0.01, 0.99, 99)
+    best_thr, best_f1 = 0.5, -np.inf
+    for t in thr_grid:
+        y_hat = (y_prob >= float(t)).astype(int)
+        f1 = f1_score(y_true, y_hat)
+        if f1 > best_f1:
+            best_thr, best_f1 = float(t), float(f1)
+    return {"thr": best_thr, "f1": best_f1}
+
 
 # --- Training ----------------------------------------------------------------------------
 def train_model(
@@ -167,7 +178,22 @@ def train_model(
     out_path = versioned_filename(model_out_dir, "model_best", ".pkl")
     joblib.dump({"pipeline": pipe, "threshold": thr}, out_path)
     print(f"Modelo guardado en: {out_path}")
-    return str(out_path)
+
+    # --- H6 check: compare profits (hidden; enable with FRAUD_H6=1) ---
+    thr_profit = thr
+    thr_half = 0.5
+    thr_f1 = find_best_threshold_for_f1(y_valid.values, proba_valid)["thr"]
+
+    profit_profit = compute_profit(y_valid.values, proba_valid, amt_valid.values, thr_profit)
+    profit_half = compute_profit(y_valid.values, proba_valid, amt_valid.values, thr_half)
+    profit_f1 = compute_profit(y_valid.values, proba_valid, amt_valid.values, thr_f1)
+
+    if os.getenv("FRAUD_H6", "0") == "1":
+        print(
+            "[H6] opt_profit="
+            f"{profit_profit:,.2f} | thr=0.5={profit_half:,.2f} | "
+            f"opt_F1({thr_f1:.3f})={profit_f1:,.2f}"
+        )
 
 
 def parse_args() -> argparse.Namespace:
