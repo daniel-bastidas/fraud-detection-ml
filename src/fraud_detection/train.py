@@ -8,7 +8,6 @@ from pathlib import Path
 import joblib
 import numpy as np
 import optuna
-import pandas as pd
 from sklearn.metrics import (
     average_precision_score,
     f1_score,
@@ -40,7 +39,7 @@ def compute_profit(
     gain_legit: float = 0.25,
     cost_fraud: float = 1.0,
 ) -> float:
-    """Approve if p_fraud < thr; profit = +0.25*legit_amount_approved - 1.0*fraud_amount_approved."""
+    """Approve if p_fraud < thr; profit = +0.25*legit_amount_approved - 1.0*fraud_amount_approved."""  # noqa: E501
     y_true = np.asarray(y_true).astype(int)
     y_prob = np.asarray(y_prob, dtype=float)
     amount = np.asarray(amount, dtype=float)
@@ -154,8 +153,14 @@ def train_model(
     f1 = f1_score(y_valid, y_pred_thr)
     profit_at_thr = compute_profit(y_valid.values, proba_valid, amt_valid.values, thr)
 
-    print(f"ROC-AUC: {roc:.4f} | PR-AUC: {pr:.4f} | Best Thr: {thr:.3f} | Profit: {best_profit:,.2f}")
-    print(f"[THRESH {thr:.3f}] Precision: {prec:.4f} | Recall: {rec:.4f} | F1: {f1:.4f} | Profit: {profit_at_thr:,.2f}")
+    print(
+        f"ROC-AUC: {roc:.4f} | PR-AUC: {pr:.4f} | "
+        f"Best Thr: {thr:.3f} | Profit: {best_profit:,.2f}"
+    )
+    print(
+        f"[THRESH {thr:.3f}] Precision: {prec:.4f} | Recall: {rec:.4f} | "
+        f"F1: {f1:.4f} | Profit: {profit_at_thr:,.2f}"
+    )
 
     # Save bundle (pipeline + threshold)
     os.makedirs(model_out_dir, exist_ok=True)
@@ -166,13 +171,23 @@ def train_model(
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Entrenamiento de modelo de fraude (PR-AUC + umbral por ganancia)")
+    p = argparse.ArgumentParser(
+        description="Entrenamiento de modelo de fraude (PR-AUC + umbral por ganancia)"
+    )
     p.add_argument("--data", required=True, help="Ruta al CSV con los datos")
-    p.add_argument("--target", required=True, help="Nombre de la columna objetivo (0/1)")
-    p.add_argument("--amount_col", required=True, help="Nombre de la columna de monto (ej. monto_raw)")
+    p.add_argument(
+        "--target", required=True, help="Nombre de la columna objetivo (0/1)"
+    )
+    p.add_argument(
+        "--amount_col",
+        required=True,
+        help="Nombre de la columna de monto (ej. monto_raw)",
+    )
     p.add_argument("--trials", type=int, default=20, help="Optuna trials")
     p.add_argument("--seed", type=int, default=42)
-    p.add_argument("--calibrate", choices=["none", "isotonic", "sigmoid"], default="isotonic")
+    p.add_argument(
+        "--calibrate", choices=["none", "isotonic", "sigmoid"], default="isotonic"
+    )
     return p.parse_args()
 
 

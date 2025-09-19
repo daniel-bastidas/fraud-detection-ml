@@ -11,16 +11,28 @@ def _load_bundle(path: str | Path) -> dict:
     obj = joblib.load(path)
     if isinstance(obj, dict) and "pipeline" in obj:
         return obj
-    raise ValueError("Model file must be a bundle like {'pipeline': ..., 'threshold': ...}")
+    raise ValueError(
+        "Model file must be a bundle like {'pipeline': ..., 'threshold': ...}"
+    )
 
 
 def cli() -> None:
-    parser = argparse.ArgumentParser(description="Inferencia por lote (usa umbral del bundle)")
-    parser.add_argument("--model", required=True, help="Ruta al .pkl con {'pipeline','threshold'}")
+    parser = argparse.ArgumentParser(
+        description="Inferencia por lote (usa umbral del bundle)"
+    )
+    parser.add_argument(
+        "--model", required=True, help="Ruta al .pkl con {'pipeline','threshold'}"
+    )
     parser.add_argument("--input", required=True, help="CSV con features")
     parser.add_argument("--output", default=None, help="CSV de salida (opcional)")
-    parser.add_argument("--threshold", type=float, default=None, help="Override del umbral (opcional)")
-    parser.add_argument("--proba", action="store_true", help="Devolver probabilidades en lugar de labels")
+    parser.add_argument(
+        "--threshold", type=float, default=None, help="Override del umbral (opcional)"
+    )
+    parser.add_argument(
+        "--proba",
+        action="store_true",
+        help="Devolver probabilidades en lugar de labels",
+    )
     args = parser.parse_args()
 
     bundle = _load_bundle(args.model)
