@@ -1,5 +1,0 @@
-{
-  "thr": 0.16,
-  "profit_val": 166184.02000000002,
-  "policy": "block if P(fraud) >= thr"
-}

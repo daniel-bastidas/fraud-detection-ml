@@ -1,15 +1,38 @@
+# Byte-compiled / cache
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Build artifacts
 .build/
 dist/
 .eggs/
 *.egg-info/
+
+# Envs
 .venv/
-.env/
 venv/
+.env/
+
+# Jupyter
 .ipynb_checkpoints/
-data/processed/
-artifacts/
+
+# Data — keep everything in repo (no ignore)
+
+# Artifacts — keep JSONs, ignore heavy binaries
+artifacts/**/*.pkl
+artifacts/**/*.joblib
+artifacts/**/*.csv
+artifacts/**/*.parquet
+artifacts/**/*.feather
+
+# OS junk
 .DS_Store
 Thumbs.db
+
+# VS Code (only settings & extensions for plug and play)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json

@@ -1,0 +1,24 @@
+{
+  // --- Python / Poetry env ---
+  "python.defaultInterpreterPath": ".venv\\Scripts\\python.exe",
+
+  // --- Testing ---
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+
+  // --- Formatting / Style ---
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.formatOnSave": true
+  },
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+
+  // --- Imports / Sorting ---
+  "isort.args": [
+    "--profile", "black"
+  ]
+}

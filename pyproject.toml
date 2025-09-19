@@ -4,10 +4,10 @@ version = "0.1.1"
 description = "Technical test ML deteccion de fraude"
 authors = ["Daniel Bastidas <danielb.data@gmail.com>"]
 readme = "README.md"
-packages = [{ include = "src" }]
+packages = [{ include = "fraud_detection", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.12"
 pandas = "^2.2.2"
 numpy = "^1.26.4"
 scikit-learn = "^1.5.1"
@@ -35,3 +35,7 @@ testpaths = ["tests"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+fraud-train = "fraud_detection.train:cli"
+fraud-infer = "fraud_detection.inference:cli"
